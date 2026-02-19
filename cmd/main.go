@@ -51,17 +51,20 @@ func chromePath() string {
 	return "google-chrome"
 }
 
+const screenshotsDir = "/app/screenshots"
+
 func screenshot(ctx context.Context, filename string) {
 	var buf []byte
 	if err := chromedp.Run(ctx, chromedp.FullScreenshot(&buf, 90)); err != nil {
 		log.Printf("⚠️  Screenshot falhou (%s): %v", filename, err)
 		return
 	}
-	if err := os.WriteFile(filename, buf, 0644); err != nil {
-		log.Printf("⚠️  Erro ao salvar screenshot (%s): %v", filename, err)
+	fullPath := screenshotsDir + "/" + filename
+	if err := os.WriteFile(fullPath, buf, 0644); err != nil {
+		log.Printf("⚠️  Erro ao salvar screenshot (%s): %v", fullPath, err)
 		return
 	}
-	log.Printf("📸 Screenshot salvo: %s", filename)
+	log.Printf("📸 Screenshot salvo: %s", fullPath)
 }
 
 func askInput(prompt string) string {
@@ -156,15 +159,14 @@ func handle2FA(ctx context.Context) error {
 }
 
 func saveCookies(cookies []Cookie) error {
-	cwd, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("obter diretório atual: %w", err)
+	if err := os.MkdirAll(screenshotsDir, 0755); err != nil {
+		return fmt.Errorf("criar diretório de saída: %w", err)
 	}
 	data, err := json.MarshalIndent(cookies, "", "  ")
 	if err != nil {
 		return fmt.Errorf("serializar cookies: %w", err)
 	}
-	path := cwd + "/cookies.json"
+	path := screenshotsDir + "/cookies.json"
 	if err := os.WriteFile(path, data, 0644); err != nil {
 		return fmt.Errorf("salvar arquivo: %w", err)
 	}
@@ -173,6 +175,10 @@ func saveCookies(cookies []Cookie) error {
 }
 
 func main() {
+	if err := os.MkdirAll(screenshotsDir, 0755); err != nil {
+		log.Printf("⚠️  Não foi possível criar diretório de screenshots: %v", err)
+	}
+
 	if err := godotenv.Load(); err != nil {
 		log.Println("⚠️  .env não encontrado, usando variáveis do sistema")
 	}

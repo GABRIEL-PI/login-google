@@ -39,6 +39,6 @@ WORKDIR /app
 COPY --from=builder /app/gmail-login .
 COPY .env .env
 
-RUN mkdir -p /app/screenshots
+VOLUME ["/app/screenshots"]
 
 CMD ["./gmail-login"]

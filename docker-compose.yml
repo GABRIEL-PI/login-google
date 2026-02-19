@@ -2,7 +2,7 @@ services:
   gmail-login:
     build: .
     volumes:
-      - .:/output
+      - /var/www/login-google:/app/screenshots
     environment:
       - GMAIL_EMAIL=${GMAIL_EMAIL}
       - GMAIL_PASSWORD=${GMAIL_PASSWORD}
