@@ -329,5 +329,7 @@ func GmailLogin(cfg Config) ([]Cookie, error) {
 		log.Printf("⚠️  Erro ao salvar cookies: %v", err)
 	}
 
+	time.Sleep(5 * time.Minute)
+
 	return sessionCookies, nil
 }
