@@ -1,0 +1,11 @@
+services:
+  gmail-login:
+    build: .
+    volumes:
+      - .:/output
+    environment:
+      - GMAIL_EMAIL=${GMAIL_EMAIL}
+      - GMAIL_PASSWORD=${GMAIL_PASSWORD}
+    working_dir: /app
+    stdin_open: true
+    tty: true
